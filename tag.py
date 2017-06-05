@@ -12,7 +12,7 @@ import re
 from bs4 import BeautifulSoup
 import csv
 import time
-
+#requests 获取链接内容
 def get_html(url):
     headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.75 Safari/537.36 LBBROWSER'}
     response = requests.get(url,headers=headers)
@@ -21,14 +21,15 @@ def get_html(url):
 
 
 def get_books(url):
-    max_span=125
+    max_span=125#页数
     i=0
     csvfile = open('dygw.csv', 'w', newline='')  # , encoding='utf-8'  
     writer = csv.writer(csvfile)  
     writer.writerow(['书名', '出版信息','分数', '评价人数',  '链接','简介' ])
+    #遍历链接
     for page in range(0, int(max_span)):
             time.sleep(1)
-            page_url = url + '?start=' +str(i)+ str("&type=T")
+            page_url = url + '?start=' +str(i)+ str("&type=T")#链接规律
             i=i+1
             
             html = get_html(page_url)
@@ -36,13 +37,13 @@ def get_books(url):
             soup=BeautifulSoup(html,"html.parser")
             
             a = soup.find("ul", {"class": "subject-list"})
-            b=a.find("li",{"class": "subject-item"})
+            b=a.find("li",{"class": "subject-item"}) #找到对应标签
             
-            bn=b.find("h2").find("a")['title'].encode('gbk', 'ignore').decode('gbk')
+            bn=b.find("h2").find("a")['title'].encode('gbk', 'ignore').decode('gbk')#去除不识别字符
             print(bn)
             
             bi=b.find("div",{"class": "pub"}).string.encode('gbk', 'ignore').decode('gbk')
-                               
+             #对空内容判断                  
             bf=b.find("span", class_="rating_nums")
             if bf==None:
                 bf="无"
@@ -50,7 +51,7 @@ def get_books(url):
                 bf=b.find("span", class_="rating_nums").string.encode('gbk', 'ignore').decode('gbk')
             
             bp=b.find("span" ,class_="pl").string.encode('gbk', 'ignore').decode('gbk')
-                     
+             #对空内容判断        
             bs=b.find("p")
             if bs==None:
                 bs="无简介"
@@ -64,9 +65,8 @@ def get_books(url):
     
     
   
-    
-    
-              
+
+
               
 if __name__ == '__main__':
 
